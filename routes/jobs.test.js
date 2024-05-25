@@ -285,3 +285,24 @@ describe("DELETE /jobs/:id", function () {
     expect(resp.statusCode).toEqual(404);
   });
 });
+
+describe("POST /jobs", () => {
+  test("should return 400 for invalid job data", async () => {
+    const invalidJobData = {
+      // Missing required 'title' and 'companyHandle'
+      invalidField: "This should fail",
+    };
+
+    const response = await request(app)
+      .post("/jobs")
+      .send(invalidJobData)
+      .set("Accept", "application/json")
+      .expect("Content-Type", /json/)
+      .expect(400);
+
+    expect(response.body.error).toBeTruthy();
+    expect(response.body.error.message).toContain(
+      'instance requires property "title"'
+    );
+  });
+});

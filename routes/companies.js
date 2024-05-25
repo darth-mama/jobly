@@ -9,8 +9,8 @@ const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn } = require("../middleware/auth");
 const Company = require("../models/company");
 
-const companyNewSchema = require("../schemas/companyNew.json");
-const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companyNew = require("../schemas/companyNew.json");
+const companyUpdate = require("../schemas/companyUpdate.json");
 
 const router = new express.Router();
 
@@ -25,7 +25,7 @@ const router = new express.Router();
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, companyNewSchema);
+    const validator = jsonschema.validate(req.body, companyNew);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
@@ -56,7 +56,7 @@ router.get("/", async function (req, res, next) {
   if (q.maxEmployees !== undefined) q.maxEmployees = +q.maxEmployees;
 
   try {
-    const validator = jsonschema.validate(q, companySearchSchema);
+    const validator = jsonschema.validate(q, companySearch);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
@@ -99,7 +99,7 @@ router.get("/:handle", async function (req, res, next) {
 
 router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, companyUpdateSchema);
+    const validator = jsonschema.validate(req.body, companyUpdate);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);

@@ -6,14 +6,11 @@ const express = require("express");
 const { ensureAdmin } = require("../middleware/auth");
 const Job = require("../models/jobs");
 
-const jobNewSchema = require("../schemas/jobNewSchema");
-const jobSearchSchema = require("../schemas/jobSearchSchema");
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin } = require("../middleware/auth");
-const Job = require("../models/job");
-const jobNewSchema = require("../schemas/jobNew.json");
-const jobUpdateSchema = require("../schemas/jobUpdate.json");
-const jobSearchSchema = require("../schemas/jobSearch.json");
+
+const jobNewSchema = require("../schemas/jobNewSchema.json");
+const jobUpdateSchema = require("../schemas/jobUpdateSchema.json");
+const jobSearchSchema = require("../schemas/jobSearchSchema.json");
 
 const router = express.Router();
 /** POST / { job } =>  { job }
@@ -28,9 +25,11 @@ const router = express.Router();
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, jobNewSchema);
+    console.log(validator);
     //Return error stack if bad request = true
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
+      console.log(errs);
       throw new BadRequestError(errs);
     }
     const job = await Job.create(req.body);
